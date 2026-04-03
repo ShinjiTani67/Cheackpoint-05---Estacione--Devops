@@ -61,7 +61,7 @@ public class CarroController {
 
     @GetMapping("/edit/{id}")
     public String editCarro(@PathVariable UUID id, Model model) {
-        CarroDTO carroDTO = service.findById(id);
+        CarroDTO carro = service.findById(id);
         model.addAttribute("carro", carro);
         return "carroformulario";
     }

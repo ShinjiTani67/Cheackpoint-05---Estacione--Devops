@@ -1,11 +1,16 @@
 package br.com.estacione.fiap.controller;
 
+import br.com.estacione.fiap.dto.TicketDTO;
+import br.com.estacione.fiap.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/ticket")
@@ -30,7 +35,7 @@ public class TicketController {
 
     @GetMapping("/new")
     public String newAddress(Model model) {
-        model.addAttribute("address", new AddressDTO());
+        model.addAttribute("address", new TicketDTO());
         return "addressformulario";
     }
 
