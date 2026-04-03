@@ -2,6 +2,7 @@ package br.com.estacione.fiap.controller;
 
 
 import br.com.estacione.fiap.dto.CarroDTO;
+import br.com.estacione.fiap.service.CarroService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/carro")
@@ -58,7 +61,7 @@ public class CarroController {
 
     @GetMapping("/edit/{id}")
     public String editCarro(@PathVariable UUID id, Model model) {
-        CarroDTO carro = service.findById(id);
+        CarroDTO carroDTO = service.findById(id);
         model.addAttribute("carro", carro);
         return "carroformulario";
     }
