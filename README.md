@@ -1,5 +1,9 @@
 ## Estacione – DevOps Checkpoint 05
 
+## Integrantes
+
+- Fernando Shinji Tanigushi RM553587
+
 ## Tecnologias Utilizadas
 - Java 21
 - Spring Boot
