@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -22,11 +23,8 @@ public class CarroController {
     private final CarroService service;
 
     @GetMapping
-    public String listCarro(Model model) {
-        var carro = service.getCarro();
-        carro.forEach(a -> log.info("ID do carro: " + a.getUuid()));
-        model.addAttribute("carroList", carro);
-        return "carro";
+    public List<CarroDTO> listCarro() {
+        return service.getCarro();
     }
 
     @GetMapping("/test")

@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -20,11 +21,8 @@ public class TicketController {
     private final TicketService service;
 
     @GetMapping
-    public String listTicket(Model model) {
-        var ticket = service.getTicket();
-        ticket.forEach(a -> log.info("ID do ticket: " + a.getUuid()));
-        model.addAttribute("addressList", ticket);
-        return "ticket";
+    public List<TicketDTO> listCarro() {
+        return service.getTicket();
     }
 
     @GetMapping("/test")
