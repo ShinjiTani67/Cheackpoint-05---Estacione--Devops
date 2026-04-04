@@ -16,13 +16,13 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(nullable = false)
     private String valor;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(nullable = false)
     private String tempo;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(nullable = false)
     private Boolean pago;
 
 }

@@ -18,10 +18,10 @@ public class Carro {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(nullable = false)
     private String modelo;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(nullable = false)
     private String placa;
 
 
