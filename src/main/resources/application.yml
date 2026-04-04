@@ -1,0 +1,94 @@
+spring:
+  application:
+    name: horadaprotecao
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  rabbitmq:
+    host: localhost
+    port: 5672 # http://localhost:15672
+    username: guest
+    password: guest
+  mail:
+    host: localhost
+    port: 1025
+    username: test
+    password: test
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    check-template-location: true
+    servlet:
+      content-type: text/html
+  http:
+    encoding:
+      charset: UTF-8
+  messages:
+    basename: messages
+    encoding: UTF-8
+  devtools:
+    restart:
+      enabled: true
+  ai:
+    openai:
+      api-key: AIzaSyCuVd8sL5t0LqngH3USa3uP36q8riJF5mU
+      base-url: https://generativelanguage.googleapis.com
+      chat:
+        completions-path: /v1beta/openai/chat/completions
+        options:
+          model: gemini-2.0-flash
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            scope: openid, profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-name: Google
+            authorization-grant-type: authorization_code
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+
+
+server:
+  port: 8082
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    br: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  tracing:
+    sampling:
+      probability: 1.0
+  logging:
+    level:
+      root: DEBUG
