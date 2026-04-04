@@ -12,37 +12,13 @@ export BRANCH="main"
 
 export APP_INSIGHTS_NAME="ai-estacione-rm553587"
 
-# PostgreSQL
+# PostgreSQL já existente
 export POSTGRES_SERVER="psql-estacione-rm553587"
 export POSTGRES_DB="estacionamento"
 export POSTGRES_USER="postgresadm"
 export POSTGRES_PASSWORD="Fiap@2tdsvms"
 
-# Criar Resource Group
-az group create \
-  --name $RESOURCE_GROUP_NAME \
-  --location $LOCATION
-
-# Criar PostgreSQL Flexible Server
-az postgres flexible-server create \
-  --resource-group $RESOURCE_GROUP_NAME \
-  --name $POSTGRES_SERVER \
-  --location $LOCATION \
-  --admin-user $POSTGRES_USER \
-  --admin-password $POSTGRES_PASSWORD \
-  --sku-name Standard_B1ms \
-  --tier Burstable \
-  --storage-size 32 \
-  --version 14 \
-  --public-access 0.0.0.0
-
-# Criar banco
-az postgres flexible-server db create \
-  --resource-group $RESOURCE_GROUP_NAME \
-  --server-name $POSTGRES_SERVER \
-  --database-name $POSTGRES_DB
-
-# Criar Application Insights
+# Criar Application Insights (caso não exista)
 az monitor app-insights component create \
   --app $APP_INSIGHTS_NAME \
   --location $LOCATION \
@@ -57,7 +33,7 @@ az appservice plan create \
   --sku F1 \
   --is-linux
 
-# Criar WebApp
+# Criar Web App
 az webapp create \
   --name $WEBAPP_NAME \
   --resource-group $RESOURCE_GROUP_NAME \
@@ -73,7 +49,7 @@ az resource update \
   --parent sites/$WEBAPP_NAME \
   --set properties.allow=true
 
-# Recuperar Connection String do App Insights
+# Recuperar Connection String do Application Insights
 CONNECTION_STRING=$(az monitor app-insights component show \
   --app $APP_INSIGHTS_NAME \
   --resource-group $RESOURCE_GROUP_NAME \
