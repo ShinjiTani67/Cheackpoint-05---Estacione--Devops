@@ -15,9 +15,9 @@ export RESOURCE_GROUP_NAME="rg-estacione-rm553587"
 export WEBAPP_NAME="estacione-rm553587"
 export APP_SERVICE_PLAN="estacione-rm553587"
 # Altere a sua região conforme orientação do Professor
-export LOCATION="brazilsouth"
-export RUNTIME="JAVA:17-java17"
-export GITHUB_REPO_NAME="profjoaomenk/movtodimdim-Java-17"
+export LOCATION="chilecentral"
+export RUNTIME="JAVA:21-java21"
+export GITHUB_REPO_NAME="checkpoint05--estacione-devops"
 export BRANCH="main"
 export APP_INSIGHTS_NAME="ai-estacione-rm553587"
 
