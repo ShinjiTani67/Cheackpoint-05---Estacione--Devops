@@ -26,6 +26,12 @@ public class CarroController {
         return service.getCarro();
     }
 
+    @PutMapping("/{id}")
+    public CarroDTO update(@PathVariable UUID id, @RequestBody CarroDTO carroDTO){
+        carroDTO.setUuid(id);
+        return service.save(carroDTO);
+    }
+
     @GetMapping("/{id}")
     public CarroDTO findById(@PathVariable UUID id) {
         return service.findById(id);
