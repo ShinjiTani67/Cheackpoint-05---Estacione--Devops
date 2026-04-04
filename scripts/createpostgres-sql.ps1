@@ -1,5 +1,5 @@
 $RG = "rg-estacione-rm553587"
-$LOCATION = "brazilsouth"
+$LOCATION = "chilecentral"
 $SERVER_NAME = "psql-rm553587"
 $USERNAME = "admpsql"
 $PASSWORD = "Fiap@2tdsvms"
