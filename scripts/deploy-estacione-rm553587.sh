@@ -1,92 +1,114 @@
 #!/bin/bash
 
 # Variáveis
-
-# Altere todos os RM9999 e seu Repositório
-#
-# Utilizem Regiões diferentes, espalhem a criação do App:
-#
-# brazilsouth
-# eastus
-# eastus2
-# westus
-# westus2
 export RESOURCE_GROUP_NAME="rg-estacione-rm553587"
 export WEBAPP_NAME="estacione-rm553587"
 export APP_SERVICE_PLAN="estacione-rm553587"
-# Altere a sua região conforme orientação do Professor
 export LOCATION="chilecentral"
 export RUNTIME="JAVA:21-java21"
+
 export GITHUB_REPO_NAME="checkpoint05--estacione-devops"
 export BRANCH="main"
+
 export APP_INSIGHTS_NAME="ai-estacione-rm553587"
+
+# PostgreSQL
+export POSTGRES_SERVER="psql-estacione-rm553587"
+export POSTGRES_DB="estacionamento"
+export POSTGRES_USER="postgresadm"
+export POSTGRES_PASSWORD="Fiap@2tdsvms"
+
+# Criar Resource Group
+az group create \
+  --name $RESOURCE_GROUP_NAME \
+  --location $LOCATION
+
+# Criar PostgreSQL Flexible Server
+az postgres flexible-server create \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --name $POSTGRES_SERVER \
+  --location $LOCATION \
+  --admin-user $POSTGRES_USER \
+  --admin-password $POSTGRES_PASSWORD \
+  --sku-name Standard_B1ms \
+  --tier Burstable \
+  --storage-size 32 \
+  --version 14 \
+  --public-access 0.0.0.0
+
+# Criar banco
+az postgres flexible-server db create \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --server-name $POSTGRES_SERVER \
+  --database-name $POSTGRES_DB
 
 # Criar Application Insights
 az monitor app-insights component create \
-  --app "$APP_INSIGHTS_NAME" \
-  --location "$LOCATION" \
-  --resource-group "$RESOURCE_GROUP_NAME" \
+  --app $APP_INSIGHTS_NAME \
+  --location $LOCATION \
+  --resource-group $RESOURCE_GROUP_NAME \
   --application-type web
 
-# Criar o Plano de Serviço
+# Criar App Service Plan
 az appservice plan create \
-  --name "$APP_SERVICE_PLAN" \
-  --resource-group "$RESOURCE_GROUP_NAME" \
-  --location "$LOCATION" \
+  --name $APP_SERVICE_PLAN \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --location $LOCATION \
   --sku F1 \
   --is-linux
 
-# Criar o Serviço de Aplicativo
+# Criar WebApp
 az webapp create \
-  --name "$WEBAPP_NAME" \
-  --resource-group "$RESOURCE_GROUP_NAME" \
-  --plan "$APP_SERVICE_PLAN" \
-  --runtime "$RUNTIME"
+  --name $WEBAPP_NAME \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --plan $APP_SERVICE_PLAN \
+  --runtime $RUNTIME
 
-# Habilita a autenticação Básica (SCM)
+# Habilitar SCM Basic Auth
 az resource update \
-  --resource-group "$RESOURCE_GROUP_NAME" \
+  --resource-group $RESOURCE_GROUP_NAME \
   --namespace Microsoft.Web \
   --resource-type basicPublishingCredentialsPolicies \
   --name scm \
-  --parent sites/"$WEBAPP_NAME" \
+  --parent sites/$WEBAPP_NAME \
   --set properties.allow=true
 
-# Recuperar a String de Conexão do Application Insights
+# Recuperar Connection String do App Insights
 CONNECTION_STRING=$(az monitor app-insights component show \
-  --app "$APP_INSIGHTS_NAME" \
-  --resource-group "$RESOURCE_GROUP_NAME" \
+  --app $APP_INSIGHTS_NAME \
+  --resource-group $RESOURCE_GROUP_NAME \
   --query connectionString \
   --output tsv)
 
-# Configurar as Variáveis de Ambiente necessárias do nosso App e do Application Insights
+# Configurar variáveis de ambiente
 az webapp config appsettings set \
-  --name "$WEBAPP_NAME" \
-  --resource-group "$RESOURCE_GROUP_NAME" \
+  --name $WEBAPP_NAME \
+  --resource-group $RESOURCE_GROUP_NAME \
   --settings \
-    APPLICATIONINSIGHTS_CONNECTION_STRING="$CONNECTION_STRING" \
-    ApplicationInsightsAgent_EXTENSION_VERSION="~3" \
-    XDT_MicrosoftApplicationInsights_Mode="Recommended" \
-    XDT_MicrosoftApplicationInsights_PreemptSdk="1" \
-    SPRING_DATASOURCE_USERNAME="admsql" \
-    SPRING_DATASOURCE_PASSWORD="Fiap@2tdsvms" \
-    SPRING_DATASOURCE_URL="jdbc:sqlserver://sqlserver-rm553587.database.windows.net:1433;database=dimdimdb;user=admsql@sqlserver-rm553587;password={your_password_here};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
+APPLICATIONINSIGHTS_CONNECTION_STRING=$CONNECTION_STRING \
+ApplicationInsightsAgent_EXTENSION_VERSION="~3" \
+XDT_MicrosoftApplicationInsights_Mode="Recommended" \
+XDT_MicrosoftApplicationInsights_PreemptSdk="1" \
+SPRING_DATASOURCE_URL="jdbc:postgresql://$POSTGRES_SERVER.postgres.database.azure.com:5432/$POSTGRES_DB" \
+SPRING_DATASOURCE_USERNAME="$POSTGRES_USER@$POSTGRES_SERVER" \
+SPRING_DATASOURCE_PASSWORD="$POSTGRES_PASSWORD" \
+SPRING_JPA_HIBERNATE_DDL_AUTO="update"
 
-# Reiniciar o Web App
+# Reiniciar WebApp
 az webapp restart \
-  --name "$WEBAPP_NAME" \
-  --resource-group "$RESOURCE_GROUP_NAME"
+  --name $WEBAPP_NAME \
+  --resource-group $RESOURCE_GROUP_NAME
 
-# Criar a conexão do nosso Web App com o Application Insights
+# Conectar Application Insights
 az monitor app-insights component connect-webapp \
-  --app "$APP_INSIGHTS_NAME" \
-  --web-app "$WEBAPP_NAME" \
-  --resource-group "$RESOURCE_GROUP_NAME"
+  --app $APP_INSIGHTS_NAME \
+  --web-app $WEBAPP_NAME \
+  --resource-group $RESOURCE_GROUP_NAME
 
-# Configurar GitHub Actions para Build e Deploy automático
+# Configurar GitHub Actions
 az webapp deployment github-actions add \
-  --name "$WEBAPP_NAME" \
-  --resource-group "$RESOURCE_GROUP_NAME" \
-  --repo "$GITHUB_REPO_NAME" \
-  --branch "$BRANCH" \
+  --name $WEBAPP_NAME \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --repo $GITHUB_REPO_NAME \
+  --branch $BRANCH \
   --login-with-github
