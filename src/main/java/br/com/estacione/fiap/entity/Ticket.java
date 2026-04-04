@@ -11,8 +11,9 @@ import java.util.UUID;
 @ToString
 @Table(name="tb_ticket")
 public class Ticket {
+
     @Id
-    @Column(columnDefinition = "UUID")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
     @Column(nullable = false, unique = true, length = 8)
