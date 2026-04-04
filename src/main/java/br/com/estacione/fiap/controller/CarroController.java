@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@Controller
+@RestController
 @RequestMapping("/carro")
 @AllArgsConstructor
-@Log
 public class CarroController {
 
     private final CarroService service;
@@ -27,48 +26,18 @@ public class CarroController {
         return service.getCarro();
     }
 
-    @GetMapping("/test")
-    @ResponseBody
-    public String test() {
-        return "Carro funcionando!";
+    @GetMapping("/{id}")
+    public CarroDTO findById(@PathVariable UUID id) {
+        return service.findById(id);
     }
 
-    @GetMapping("/new")
-    public String newCarro(Model model) {
-        model.addAttribute("carro", new CarroDTO());
-        return "carroformulario";
+    @PostMapping
+    public CarroDTO save(@RequestBody CarroDTO carroDTO){
+        return service.save(carroDTO);
     }
 
-    @PostMapping("/save")
-    public String saveAddress(
-            @Valid @ModelAttribute("carro") CarroDTO carroDTO,
-            BindingResult bindingResult,
-            Model model
-    ) {
-        if (bindingResult.hasErrors()) {
-            log.warning("Erros de validação ao salvar carro:");
-            bindingResult.getAllErrors().forEach(e -> log.warning(e.toString()));
-            model.addAttribute("carro", carroDTO);
-            return "carroformulario";
-        }
-
-        log.info("Salvando carro: " + carroDTO);
-        service.save(carroDTO);
-        return "redirect:/carro";
-    }
-
-    @GetMapping("/edit/{id}")
-    public String editCarro(@PathVariable UUID id, Model model) {
-        CarroDTO carro = service.findById(id);
-        model.addAttribute("carro", carro);
-        return "carroformulario";
-    }
-
-    @GetMapping("/delete/{id}")
-    public String deleteCarro(@PathVariable UUID id) {
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable UUID id){
         service.deleteById(id);
-        return "redirect:/carro";
     }
-
-
 }

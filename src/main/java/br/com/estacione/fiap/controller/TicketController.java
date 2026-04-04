@@ -13,59 +13,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@Controller
+@RestController
 @RequestMapping("/ticket")
 @AllArgsConstructor
-@Log
 public class TicketController {
+
     private final TicketService service;
 
     @GetMapping
-    public List<TicketDTO> listCarro() {
+    public List<TicketDTO> listTicket() {
         return service.getTicket();
     }
 
+    @GetMapping("/{id}")
+    public TicketDTO findById(@PathVariable UUID id) {
+        return service.findById(id);
+    }
+
+    @PostMapping
+    public TicketDTO save(@RequestBody TicketDTO ticketDTO) {
+        return service.save(ticketDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable UUID id) {
+        service.deleteById(id);
+    }
+
     @GetMapping("/test")
-    @ResponseBody
     public String test() {
         return "Ticket validado!";
-    }
-
-    @GetMapping("/new")
-    public String newAddress(Model model) {
-        model.addAttribute("address", new TicketDTO());
-        return "addressformulario";
-    }
-
-    @PostMapping("/save")
-    public String saveTicket(
-            @Valid @ModelAttribute("ticket") TicketDTO ticketDTO,
-            BindingResult bindingResult,
-            Model model
-    ) {
-        if (bindingResult.hasErrors()) {
-            log.warning("Erros de validação ao salvar o ticket:");
-            bindingResult.getAllErrors().forEach(e -> log.warning(e.toString()));
-            model.addAttribute("ticket", ticketDTO);
-            return "ticketformulario";
-        }
-
-        log.info("Salvando ticket: " + ticketDTO);
-        service.save(ticketDTO);
-        return "redirect:/ticket";
-    }
-
-    @GetMapping("/edit/{id}")
-    public String editTicket(@PathVariable UUID id, Model model) {
-        TicketDTO ticket = service.findById(id);
-        model.addAttribute("ticket", ticket);
-        return "ticketformulario";
-    }
-
-    @GetMapping("/delete/{id}")
-    public String deleteTicket(@PathVariable UUID id) {
-        service.deleteById(id);
-        return "redirect:/ticket";
     }
 
 }
