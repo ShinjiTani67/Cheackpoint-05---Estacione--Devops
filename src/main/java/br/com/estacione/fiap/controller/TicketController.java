@@ -34,7 +34,7 @@ public class TicketController {
     public TicketDTO save(@RequestBody TicketDTO ticketDTO) {
         return service.save(ticketDTO);
     }
-    
+
     @PutMapping("/{id}")
     public TicketDTO update(@PathVariable UUID id, @RequestBody TicketDTO ticketDTO){
         ticketDTO.setUuid(id);
