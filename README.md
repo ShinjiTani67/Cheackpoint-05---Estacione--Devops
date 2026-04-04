@@ -13,7 +13,7 @@
 
 Este guia descreve como realizar o deploy da aplicação na Azure utilizando os scripts disponíveis na pasta scripts.
 
-1. Fazer login na Azure
+- 1. Fazer login na Azure
 
 Primeiro é necessário autenticar na Azure utilizando a Azure CLI.
 
@@ -24,7 +24,8 @@ Após executar o comando, será aberta uma página no navegador para autenticaç
 Caso possua mais de uma assinatura configurada, selecione a assinatura correta:
 
 az account set --subscription "NOME_DA_ASSINATURA"
-2. Clonar o repositório
+
+- 2. Clonar o repositório
 
 Clone o repositório do projeto:
 
@@ -33,7 +34,8 @@ git clone https://github.com/ShinjiTani67/Cheackpoint-05---Estacione--Devops.git
 Entre na pasta do projeto:
 
 cd Cheackpoint-05---Estacione--Devops
-3. Executar o script de criação do PostgreSQL
+
+- 3. Executar o script de criação do PostgreSQL
 
 Entre na pasta de scripts:
 
@@ -48,7 +50,8 @@ Este script cria automaticamente:
 Resource Group
 Servidor PostgreSQL
 Banco de dados utilizado pela aplicação
-4. Executar o script de deploy da aplicação
+
+- 4. Executar o script de deploy da aplicação
 
 Após a criação do banco de dados, execute o script responsável pelo deploy da aplicação:
 
